@@ -24,7 +24,8 @@ class LibuuidConan(ConanFile):
 
     def source(self):
         source_url = "https://downloads.sourceforge.net/project/libuuid"
-        tools.get("{}/{}-{}.tar.gz".format(source_url, self.name, self.version))
+        tools.get("{}/{}-{}.tar.gz".format(source_url, self.name, self.version),
+                  sha256="46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
         os.rename(self.name + "-" + self.version, self._source_subfolder)
 
     def configure(self):
@@ -54,6 +55,9 @@ class LibuuidConan(ConanFile):
         with tools.chdir(self._source_subfolder):
             autotools = self._configure_autotools()
             autotools.install()
+        la = os.path.join(self.package_folder, "lib", "libuuid.la")
+        if os.path.isfile(la):
+            os.unlink(la)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
